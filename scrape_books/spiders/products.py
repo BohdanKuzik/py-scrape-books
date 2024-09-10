@@ -2,19 +2,20 @@ import scrapy
 from scrapy.http import Response
 
 
+TEXT_TO_NUMBER = {
+    "Zero": 0,
+    "One": 1,
+    "Two": 2,
+    "Three": 3,
+    "Four": 4,
+    "Five": 5,
+}
+
+
 class BooksSpider(scrapy.Spider):
     name = "books"
     allowed_domains = ["toscrape.com"]
     start_urls = ["https://books.toscrape.com"]
-
-    text_to_number = {
-        "Zero": 0,
-        "One": 1,
-        "Two": 2,
-        "Three": 3,
-        "Four": 4,
-        "Five": 5,
-    }
 
     def parse(self, response: Response, **kwargs) -> None:
         for book in response.css(".product_pod"):
@@ -33,7 +34,7 @@ class BooksSpider(scrapy.Spider):
         rating_text = response.css(
             ".star-rating::attr(class)"
         ).get().split()[-1]
-        rating_number = BooksSpider.text_to_number.get(rating_text, 0)
+        rating_number = TEXT_TO_NUMBER.get(rating_text, 0)
 
         book = {
             "title": response.css("h1::text").get(),
